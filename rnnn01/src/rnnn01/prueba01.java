@@ -10,12 +10,12 @@ import java.io.*;
 
 public class prueba01 {
     public static void main(String[] args) throws FileNotFoundException, IOException{   
-        double ingreso[][]=new double[60][169];
-        double salida[][]=new double[60][10];
+        double ingreso[][]=new double[600][169];
+        double salida[][]=new double[600][10];
         
         int line = 0;
         for(int n=0; n<10; n++){
-            String dir = "/input"+n+".txt";
+            String dir = "C:/Users/JARED/Desktop/Tareas/10ciclo/deep/neuralnnn-002/Redes-Convolucionales/input"+n+".txt";
             FileReader f = new FileReader(dir);
             BufferedReader b = new BufferedReader(f);
             String cadena;
@@ -30,19 +30,12 @@ public class prueba01 {
                 salida[line][n] = 1;
                 line++;
             }
+            b.close();
         }
-        b.close();
-        for(int i=0; i<60;){
-            
-        }
-        double evaluar[][]={
-                            {0.25,0.5,0.25,0.5,1,0.5,0.25,0.5,0.25},
-                            {0.5,0.25,0,0.75,0.25,0,0.25,0,0},
-                            {0,0,0,0.25,0.5,0.25,0.5,0.75,0.25}
-                            };
+        //double evaluar[][];
         int[] m = {130,90,50};
-        rna01 rn = new rna01(169,m,10);
+        rna01 rn = new rna01(169,m,10,null);
         rn.entrenamiento(ingreso, salida, 5000);
-        rn.prueba(evaluar);
+        //rn.prueba(evaluar);
     }
 }

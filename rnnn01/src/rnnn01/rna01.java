@@ -4,7 +4,15 @@
  */
 
 package rnnn01;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Administrador
@@ -15,6 +23,7 @@ public class rna01 {
    int cm;
    int[] co;    // Aqui seria un array de nros de neuronas por cada capa
    int cs;
+   String weights;
     
    double xin[][];//={{0,1,0},{0,1,1},{1,0,0},{1,0,1}};
    //double xin[][]={{0,1,0},{0,1,1},{1,0,0},{1,0,1}};
@@ -45,13 +54,14 @@ public class rna01 {
 //   int c[]=new int[3];//capas de datos
    int[] c;//capas de datos
    
-   public rna01(int ci_,int[] co_,int cs_){
+   public rna01(int ci_,int[] co_,int cs_,String pesos){
         ci=ci_;
         cm=co_.length;     // cantidad de medios inicializada
         //int co=co_;
         co=new int[cm];
         System.arraycopy(co_, 0, co, 0, cm);
         cs=cs_;
+        weights=pesos;
         
         c = new int[cm+2];
         
@@ -80,8 +90,35 @@ public class rna01 {
         for(int i=0;i<y.length;i++){
             y[i]=0;s[i]=0;g[i]=0;
         }
-        for(int i=0;i<w.length;i++){
-            w[i]=getRandom(); 
+        if(weights==null){
+            for(int i=0;i<w.length;i++){
+                w[i]=getRandom(); 
+            }
+        }
+        else{
+            FileReader f = null;
+            try {
+                f = new FileReader(weights);
+                BufferedReader b = new BufferedReader(f);
+                String cadena;
+                while((cadena = b.readLine())!=null){
+                    String[] pieces = cadena.split(" ");
+                    for(int i=0; i<pieces.length; i++){
+                        w[i] = Integer.parseInt(pieces[i]);
+                    }
+                }
+                b.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(rna01.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(rna01.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    f.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(rna01.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         
 //        for(int i=0;i<500;i++) entrenamiento(0);
@@ -155,7 +192,33 @@ public class rna01 {
          for(int i=0;i<xin.length;i++){
             entreno(i);
          }
+        
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try
+        {
+            fichero = new FileWriter("C:/Users/JARED/Desktop/Tareas/10ciclo/deep/neuralnnn-002/Redes-Convolucionales/pesos.txt");
+            pw = new PrintWriter(fichero);
 
+            String cadena = "";
+            for (int i = 0; i < w.length; i++){
+                cadena = cadena + w[i] + " ";
+            }
+            
+            pw.println(cadena);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+           try {
+           // Nuevamente aprovechamos el finally para 
+           // asegurarnos que se cierra el fichero.
+           if (null != fichero)
+              fichero.close();
+           } catch (Exception e2) {
+              e2.printStackTrace();
+           }
+        }
     }
   
    public void entreno(int cii){
