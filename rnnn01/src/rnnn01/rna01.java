@@ -104,7 +104,7 @@ public class rna01 {
                 while((cadena = b.readLine())!=null){
                     String[] pieces = cadena.split(" ");
                     for(int i=0; i<pieces.length; i++){
-                        w[i] = Integer.parseInt(pieces[i]);
+                        w[i] = Double.parseDouble(pieces[i]);
                     }
                 }
                 b.close();
@@ -438,6 +438,16 @@ public class rna01 {
         System.out.print("salida");
         //for(int i=(co-1);i<(co+cs);i++){
         //for(int i=2;i<3;i++){
+        double max = y[c_sum];
+        int index = 0;
+        for(int i=1; i<10; i++){
+            if(y[c_sum+i]>max){
+                max = y[c_sum+i];
+                index = i;
+            }
+        }
+        System.out.print(" valor: "+index+" precisión: "+(max*100)+"%");
+        
         for(int i=c_sum;i<(c_sum+c[cm+1]);i++){
             System.out.print("["+y[i]+"] ");
         }
