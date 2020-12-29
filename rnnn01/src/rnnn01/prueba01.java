@@ -12,9 +12,8 @@ import java.util.Random;
 public class prueba01 {
     public static void main(String[] args) throws FileNotFoundException, IOException{ 
         
-        double ingreso[][]=new double[600][169];
-        double salida[][]=new double[600][10];
-        double evaluar[][]=new double[600][169];
+        double ingreso[][]=new double[540][900];
+        double salida[][]=new double[540][9];
         
         int line = 0;
         for(int n=0; n<10; n++){
@@ -25,8 +24,7 @@ public class prueba01 {
             while((cadena = b.readLine())!=null){
                 String[] pieces = cadena.split(" ");
                 for(int i=0; i<pieces.length; i++){
-                    ingreso[line][i] = Integer.parseInt(pieces[i]);
-                    evaluar[line][i] = Integer.parseInt(pieces[i]);
+                    ingreso[line][i] = Double.parseDouble(pieces[i]);
                 }
                 for(int i=0; i<10; i++)
                     salida[line][i] = 0;
@@ -62,8 +60,8 @@ public class prueba01 {
             }
             System.out.println();
         }*/
-        /*
-        double evaluar[][] = new double[60][169];
+        
+        double evaluar[][] = new double[540][900];
         
         line = 0;
         String dir = "C:/Users/JARED/Desktop/Tareas/10ciclo/deep/neuralnnn-002/Redes-Convolucionales/input5.txt";
@@ -78,7 +76,7 @@ public class prueba01 {
             line++;
         }
         b.close();
-        */
+        
         int[] m = {130,90,50};
         //rna01 rn = new rna01(169,m,10,"C:/Users/JARED/Desktop/Tareas/10ciclo/deep/neuralnnn-002/Redes-Convolucionales/pesos.txt");
         rna01 rn = new rna01(169,m,10,null);
