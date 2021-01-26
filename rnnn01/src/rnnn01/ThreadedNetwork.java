@@ -39,6 +39,9 @@ public class ThreadedNetwork implements Callable{
     }
     
     public void setWeights(double w2[]){
+        g = new double[g.length];
+        y = new double[y.length];
+        s = new double[s.length];
         w = new double[w2.length];
         //w_old = new double[w2.length];
         dif = new ArrayList<Double>();
@@ -203,7 +206,6 @@ public class ThreadedNetwork implements Callable{
         }
         
         res = new Results(dif);
-        
         return res;
     }
 }

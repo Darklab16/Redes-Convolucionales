@@ -205,7 +205,7 @@ public class rna01 {
         }
         else{
             ThreadedNetwork[] threads = new ThreadedNetwork[t];
-            List<Future<Results>> difs = new ArrayList<Future<Results>>();
+            List<Future<Results>> difs;
             int k = xin.length/t;
             for(int n=0; n<t; n++){
                 double xin_part[][] = new double[k][xin[0].length];
@@ -217,8 +217,8 @@ public class rna01 {
                 threads[n] = new ThreadedNetwork();
                 threads[n].init(c, cm, xin_part, xout_part, x, veces/ciclos);
             }
-            double w_old[];
             for(int cy=0; cy<ciclos; cy++){
+                difs = new ArrayList<Future<Results>>();
                 ExecutorService service = Executors.newFixedThreadPool(t);
                 System.out.println(cy);
                 for(int n=0; n<t; n++){             //entrena en paralelo
@@ -233,6 +233,11 @@ public class rna01 {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(rna01.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
+                double[] w_old = new double[w.length];
+                double[][] delta = new double[w.length][t];
+                double[] errors = new double[t];
+                double total = 0;
                 for(int n=0; n<t; n++){      //actualiza pesos
                     Results boxed = null;
                     try {
@@ -246,25 +251,41 @@ public class rna01 {
                     if(n==0){
                         best = boxed;
                         for(int i=0; i<w.length; i++){
+                            w_old[i] = w[i];
                             w[i] = best.dif.get(i);
+                            delta[i][n] = w[i] - w_old[i];
                         }
                         double error = getError();
-                        boxed.error = error;
+                        //boxed.error = error;
+                        errors[n]=error;
+                        total = total + error;
+                        System.out.println("Error "+n+": "+error);
                     }
                     else{
                         for(int i=0; i<w.length; i++){
                             w[i] = boxed.dif.get(i);
+                            delta[i][n] = w[i] - w_old[i];
                         }
                         double error = getError();
-                        boxed.error = error;
+                        //boxed.error = error;
+                        errors[n]=error;
+                        total = total + error;
+                        System.out.println("Error "+n+": "+error);
                         if(best.error>boxed.error){
                             best = boxed;
                         }
                     }
                 }
                 for(int i=0; i<w.length; i++){
-                    w[i] = best.dif.get(i);
+                    //w[i] = best.dif.get(i);
+                    w[i] = 0;
+                    for(int n=0; n<t; n++){
+                        w[i] = w[i] + delta[i][n]*(100-errors[n]);
+                    }
+                    w[i] = w[i]/(100*t-total) + w_old[i];
                 }
+                //System.out.println("Chosen: "+best.error+"\n");
+                System.out.println("Accuracy: "+(100-getError())+"\n");
             }
         }
         FileWriter fichero = null;
@@ -543,6 +564,7 @@ public class rna01 {
             }
             error = error + partialError(prubs, i);
         }
+        error = error*100/xin.length;
         
         return error;
    }
@@ -586,13 +608,24 @@ public class rna01 {
             }
             c_sum=c_sum+c[n+1];
         }
-        
+        /*
         double error = 0;
         for(int i=c_sum;i<(c_sum+c[cm+1]);i++){
-            error = error + (y[i]-xout[ci][i-c_sum])*(y[i]-xout[ci][i-c_sum]);
+            if(xout[time][i-c_sum]==1){
+                error = error + (xout[time][i-c_sum]-y[i]);
+            }
         }
-        error = error / c[cm+1];
+        //error = error / c[cm+1];
         
         return error;
+        */
+        double best = 0;
+        double real = 0;
+        for(int i=c_sum;i<(c_sum+c[cm+1]);i++){
+            if(y[i]>best) best = y[i];
+            if(xout[time][i-c_sum]==1) real = y[i];
+        }
+        if(real==best) return 0;
+        else return 1;
    }
 }
